@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
+from sklearn.base import BaseEstimator, ClassifierMixin
 
-class NeuralNetwork:
+class NeuralNetwork(BaseEstimator, ClassifierMixin):
     """
     ### Description 
     Implementation of an Artificial Neural Network designed for binary classification using numpy, and it implements 
@@ -119,9 +120,9 @@ class NeuralNetwork:
     ```
     """
 
-    def __init__(self, activation_func='relu', hidden_layer_sizes=[100, 100, 100], 
+    def __init__(self, activation_func='relu', hidden_layer_sizes=[100, 100, 100],
                  initialization='he', epochs=100, optimizer='adam',
-                 learning_rate=0.01, lr_decay_type='constant', lr_decrease=0.5, 
+                 learning_rate=0.01, lr_decay_type='constant', lr_decrease=0.5,
                  lr_epoch_drop=5, alpha=0.01, regularization='l2',
                  tolerance = 0.0001, tolerance_counter = 10, beta_1 = 0.9,
                  beta_2 = 0.999, epsilon=1e-8, random_state=None):
@@ -226,14 +227,14 @@ class NeuralNetwork:
 
         return final_lr
 
-    # Definining loss function for binary prediction
+    # Defining loss function for binary prediction
     def log_loss(self, y_actual, y_pred):
         y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
         loss = -np.mean(y_actual * np.log(y_pred) + (1 - y_actual) * np.log(1 - y_pred))
         
         return loss
     
-    # Defining different intialization functions to help with convergence
+    # Defining different initialization functions to help with convergence
     def xavier_initialization(self, input_size, output_size):
         bound = np.sqrt(6.0 / (input_size + output_size))
         weights = np.random.normal(-bound, bound, size=(input_size, output_size))
@@ -251,7 +252,8 @@ class NeuralNetwork:
 
         return weights
 
-    # Initializing the weights and biases based on the number of sizes in input, hidden and output layers and the initialization method
+    # Initializing the weights and biases based on the number of sizes in input, hidden and output layers and
+    # the initialization method
     def weights_biases(self, input_size, hidden_layer_sizes, output_size, initialization):
         size = [input_size] + hidden_layer_sizes + [output_size]
         
@@ -283,7 +285,8 @@ class NeuralNetwork:
 
         return activations
 
-    # Runs the backward pass and computes the updated weights and biases, adn includes regularization to prevent overfitting
+    # Runs the backward pass and computes the updated weights and biases, adn includes regularization
+    # to prevent overfitting
     # Accounts for the derivative of the specified activation function
     def back_propagation(self, X, y, activations, weights, activation_func, alpha, regularization):
         len_X = X.shape[1]
@@ -348,7 +351,8 @@ class NeuralNetwork:
         
         return weights, biases
 
-    # Trains the neural network and runs the forward and backward passes. Early stopping was included to prevent long run times
+    # Trains the neural network and runs the forward and backward passes. Early stopping was included to prevent
+    # long run times
     # and for faster convergence
     def nn_train(self, X, y, verbose=True):
         input_size = X.shape[1]
@@ -430,8 +434,8 @@ class NeuralNetwork:
         
         sigmoid_logits = self.sigmoid(logits)
 
-        prob_neg_class = sigmoid_logits
-        prob_pos_class = 1 - sigmoid_logits
+        prob_pos_class = sigmoid_logits
+        prob_neg_class = 1 - sigmoid_logits
 
         prediction_probabilities = np.nan_to_num(np.column_stack((prob_neg_class, prob_pos_class)))
 
